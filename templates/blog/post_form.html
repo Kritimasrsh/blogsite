@@ -2,69 +2,69 @@
 {% block title %}{% if form.instance.pk %}Edit post{% else %}Create post{% endif %} | My Blog{% endblock %}
 
 {% block content %}
-<div class="mx-auto max-w-4xl rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-  <div class="mb-8">
-    <p class="text-sm font-medium uppercase tracking-[0.2em] text-slate-500">Content editor</p>
-    <h1 class="mt-2 text-3xl font-semibold text-slate-900">{% if form.instance.pk %}Edit post{% else %}Create a new post{% endif %}</h1>
+<div class="editor-card">
+  <div class="editor-header">
+    <p class="hero-kicker">Content editor</p>
+    <h1 class="hero-title">{% if form.instance.pk %}Edit post{% else %}Create a new post{% endif %}</h1>
+    <p class="hero-copy">Write your article, choose a category, and publish when you are ready.</p>
   </div>
 
-  <form method="post" enctype="multipart/form-data" class="space-y-6">
+  <form method="post" enctype="multipart/form-data" class="editor-form">
     {% csrf_token %}
 
-    <div class="grid gap-6 lg:grid-cols-2">
-      <div class="space-y-2">
-        <label class="text-sm font-medium text-slate-700" for="id_title">Title</label>
+    <div class="editor-grid">
+      <div class="editor-field">
+        <label for="id_title">Title</label>
         {{ form.title }}
       </div>
-      <div class="space-y-2">
-        <label class="text-sm font-medium text-slate-700" for="id_slug">Slug</label>
+      <div class="editor-field">
+        <label for="id_slug">Slug</label>
         {{ form.slug }}
       </div>
     </div>
 
-    <div class="grid gap-6 lg:grid-cols-2">
-      <div class="space-y-2">
-        <label class="text-sm font-medium text-slate-700" for="id_category">Category</label>
+    <div class="editor-grid">
+      <div class="editor-field">
+        <label for="id_category">Category</label>
         {{ form.category }}
       </div>
-      <div class="space-y-2">
-        <label class="text-sm font-medium text-slate-700" for="id_tags">Tags</label>
-        {{ form.tags }}
+      <div class="editor-field">
+        <label for="id_status">Status</label>
+        {{ form.status }}
       </div>
     </div>
 
-    <div class="space-y-2">
-      <label class="text-sm font-medium text-slate-700" for="id_content">Content</label>
+    <div class="editor-field">
+      <label for="id_content">Content</label>
       {{ form.content }}
     </div>
 
-    <div class="space-y-2">
-      <label class="text-sm font-medium text-slate-700" for="id_excerpt">Excerpt</label>
+    <div class="editor-field">
+      <label for="id_excerpt">Excerpt</label>
       {{ form.excerpt }}
     </div>
 
-    <div class="grid gap-6 lg:grid-cols-2">
-      <div class="space-y-2">
-        <label class="text-sm font-medium text-slate-700" for="id_cover_image">Cover image</label>
+    <div class="editor-grid">
+      <div class="editor-field">
+        <label for="id_cover_image">Cover image</label>
         {{ form.cover_image }}
       </div>
-      <div class="space-y-2 rounded-2xl border border-slate-200 bg-slate-50 p-4">
-        <label class="flex items-center gap-3 text-sm font-medium text-slate-700">
-          {{ form.published }}
-          <span>Publish immediately</span>
-        </label>
+      <div class="editor-field">
+        <div class="editor-note">
+          <span>Save as a draft to work on it later, or publish it right away.</span>
+        </div>
       </div>
     </div>
 
     {% if form.errors %}
-      <div class="rounded-2xl border border-rose-200 bg-rose-50 p-4 text-sm text-rose-700">
+      <div class="editor-error">
         Please correct the highlighted fields.
       </div>
     {% endif %}
 
-    <div class="flex flex-wrap gap-3">
-      <button type="submit" class="rounded-2xl bg-slate-900 px-5 py-3 text-sm font-semibold text-white hover:bg-slate-700">Save post</button>
-      <a href="{% url 'blog:dashboard' %}" class="rounded-2xl border border-slate-200 px-5 py-3 text-sm font-semibold text-slate-700 hover:bg-slate-50">Cancel</a>
+    <div class="editor-actions">
+      <button type="submit" class="btn-primary">Save post</button>
+      <a href="{% url 'blog:dashboard' %}" class="btn-secondary">Cancel</a>
     </div>
   </form>
 </div>

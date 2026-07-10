@@ -1,13 +1,16 @@
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.admin.views.decorators import staff_member_required
+from django import forms
+from django.contrib.auth.forms import UserCreationForm
+from django.core.exceptions import ValidationError
 from django.contrib import messages
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from django.db.models import Q
-from .forms import PostForm
+from .forms import PostForm, CategoryForm, TagForm
 from .models import Post, Category, Tag
 
 class PostListView(ListView):
@@ -15,6 +18,11 @@ class PostListView(ListView):
     template_name = "blog/post_list.html"
     context_object_name = "posts"
     paginate_by = 6
+
+    def dispatch(self, request, *args, **kwargs):
+        if request.user.is_authenticated and (request.user.is_staff or request.user.is_superuser):
+            return dashboard(request)
+        return super().dispatch(request, *args, **kwargs)
 
     def get_queryset(self):
         qs = Post.objects.filter(published=True)
@@ -85,6 +93,54 @@ def login_view(request):
     return render(request, "blog/login.html")
 
 
+class SecureUserCreationForm(UserCreationForm):
+    username = forms.CharField(
+        widget=forms.TextInput(attrs={"class": "form-input", "placeholder": "Choose a username"}),
+        required=True,
+    )
+    password1 = forms.CharField(
+        widget=forms.PasswordInput(attrs={"class": "form-input", "placeholder": "Create a strong password"}),
+        required=True,
+    )
+    password2 = forms.CharField(
+        widget=forms.PasswordInput(attrs={"class": "form-input", "placeholder": "Confirm your password"}),
+        required=True,
+    )
+
+    def clean_password1(self):
+        password = self.cleaned_data.get("password1")
+        if password:
+            if len(password) < 8:
+                raise ValidationError("Password must be at least 8 characters long and include a number and a special character.")
+            if not any(char.isdigit() for char in password):
+                raise ValidationError("Password must be at least 8 characters long and include a number and a special character.")
+            if not any(not char.isalnum() for char in password):
+                raise ValidationError("Password must be at least 8 characters long and include a number and a special character.")
+        return password
+
+    def clean(self):
+        cleaned_data = super().clean()
+        password1 = cleaned_data.get("password1")
+        password2 = cleaned_data.get("password2")
+        if password1 and password2 and password1 != password2:
+            raise ValidationError("Passwords must match.")
+        return cleaned_data
+
+
+def signup_view(request):
+    if request.method == "POST":
+        form = SecureUserCreationForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            login(request, user)
+            messages.success(request, "Your account has been created successfully.")
+            return redirect("blog:post_list")
+    else:
+        form = SecureUserCreationForm()
+
+    return render(request, "blog/signup.html", {"form": form})
+
+
 def logout_view(request):
     logout(request)
     messages.success(request, "You have been logged out.")
@@ -127,6 +183,7 @@ class PostCreateView(CreateView):
 
     def form_valid(self, form):
         form.instance.author = self.request.user
+        form.instance.published = form.cleaned_data.get("status") == "published"
         messages.success(self.request, "Post created successfully.")
         return super().form_valid(form)
 
@@ -139,6 +196,7 @@ class PostUpdateView(UpdateView):
     success_url = reverse_lazy("blog:dashboard")
 
     def form_valid(self, form):
+        form.instance.published = form.cleaned_data.get("status") == "published"
         messages.success(self.request, "Post updated successfully.")
         return super().form_valid(form)
 
@@ -150,3 +208,45 @@ def delete_post(request, pk):
     post.delete()
     messages.success(request, "Post deleted successfully.")
     return redirect("blog:dashboard")
+
+
+@staff_member_required
+@login_required
+def category_list(request):
+    categories = Category.objects.all().order_by("name")
+    return render(request, "blog/category_list.html", {"categories": categories})
+
+
+@staff_member_required
+@login_required
+def category_create(request):
+    if request.method == "POST":
+        form = CategoryForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Category created successfully.")
+            return redirect("blog:category_list")
+    else:
+        form = CategoryForm()
+    return render(request, "blog/category_form.html", {"form": form, "title": "Create category"})
+
+
+@staff_member_required
+@login_required
+def tag_list(request):
+    tags = Tag.objects.all().order_by("name")
+    return render(request, "blog/tag_list.html", {"tags": tags})
+
+
+@staff_member_required
+@login_required
+def tag_create(request):
+    if request.method == "POST":
+        form = TagForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Tag created successfully.")
+            return redirect("blog:tag_list")
+    else:
+        form = TagForm()
+    return render(request, "blog/tag_form.html", {"form": form, "title": "Create tag"})

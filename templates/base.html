@@ -6,20 +6,35 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>{% block title %}My Blog{% endblock %}</title>
   <link rel="stylesheet" href="{% static 'css/output.css' %}">
+  <link rel="stylesheet" href="{% static 'css/custom.css' %}">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 </head>
-<body class="bg-neutral-50 text-neutral-900">
-  <header class="border-b border-neutral-200 bg-white">
-    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-5 flex items-center justify-between">
-      <a href="{% url 'blog:post_list' %}" class="font-bold text-xl">My Blog</a>
-    </div>
-  </header>
+<body>
+  <div class="page-shell">
+    <header class="site-header">
+      <div class="site-nav">
+        <a href="{% url 'blog:post_list' %}" class="brand">My Blog</a>
+        <div class="nav-links">
+          {% if user.is_authenticated %}
+            <a href="{% if user.is_staff or user.is_superuser %}{% url 'blog:dashboard' %}{% else %}{% url 'blog:post_list' %}{% endif %}" class="nav-chip">{{ user.username }}</a>
+            <a href="{% url 'blog:logout' %}" class="nav-chip">Logout</a>
+          {% else %}
+            <a href="{% url 'blog:login' %}" class="nav-chip">Login</a>
+            <a href="{% url 'blog:signup' %}" class="nav-chip">Sign up</a>
+          {% endif %}
+        </div>
+      </div>
+    </header>
 
-  <main class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-    {% block content %}{% endblock %}
-  </main>
+    <main class="main-content">
+      {% block content %}{% endblock %}
+    </main>
 
-  <footer class="border-t border-neutral-200 py-8 mt-10">
-    <p class="text-center text-sm text-neutral-500">&copy; {% now "Y" %} My Blog</p>
-  </footer>
+    <footer class="page-footer">
+      <p>&copy; {% now "Y" %} My Blog</p>
+    </footer>
+  </div>
 </body>
 </html>

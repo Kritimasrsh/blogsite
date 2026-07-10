@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% block title %}Sign up | My Blog{% endblock %}
+
+{% block content %}
+<div class="auth-shell">
+  <div class="auth-hero">
+    <p class="hero-kicker">Create account</p>
+    <h1 class="hero-title">Join the community</h1>
+    <p class="hero-copy">Create a secure account to explore stories, save your progress, and join the conversation with confidence.</p>
+    <ul class="auth-highlights">
+      <li>Protected account creation</li>
+      <li>Strong-password requirements</li>
+      <li>Safer sign-in experience</li>
+    </ul>
+  </div>
+
+  <div class="auth-panel">
+    {% if messages %}
+      <div class="auth-messages">
+        {% for message in messages %}
+          <div class="{% if message.tags == 'error' %}auth-message error{% else %}auth-message success{% endif %}">
+            {{ message }}
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+
+    <form method="post" class="auth-form">
+      {% csrf_token %}
+      <div class="editor-field">
+        <label for="id_username">Username</label>
+        {{ form.username }}
+      </div>
+      <div class="editor-field">
+        <label for="id_password1">Password</label>
+        {{ form.password1 }}
+        <div class="auth-policy">
+          <p>Use at least 8 characters and include a number and a special character.</p>
+        </div>
+      </div>
+      <div class="editor-field">
+        <label for="id_password2">Confirm password</label>
+        {{ form.password2 }}
+      </div>
+      {% if form.errors %}
+        <div class="editor-error">
+          {% for field, errors in form.errors.items %}
+            {% for error in errors %}
+              <div>{{ error }}</div>
+            {% endfor %}
+          {% endfor %}
+        </div>
+      {% endif %}
+      <button type="submit" class="btn-primary w-full">Create account</button>
+    </form>
+
+    <div class="auth-footer">
+      <a href="{% url 'blog:login' %}">Already have an account?</a>
+      <a href="#">Forgot password?</a>
+    </div>
+  </div>
+</div>
+{% endblock %}
