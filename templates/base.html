@@ -29,6 +29,15 @@
     </header>
 
     <main class="main-content">
+      {% if messages %}
+        <div class="auth-messages" style="margin-bottom: 1rem;">
+          {% for message in messages %}
+            <div class="{% if message.tags == 'error' %}auth-message error{% else %}auth-message success{% endif %}">
+              {{ message }}
+            </div>
+          {% endfor %}
+        </div>
+      {% endif %}
       {% block content %}{% endblock %}
     </main>
 

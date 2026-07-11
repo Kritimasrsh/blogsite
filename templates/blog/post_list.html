@@ -5,11 +5,12 @@
 <section class="hero-card">
   <p class="hero-kicker">Latest stories</p>
   <h1 class="hero-title">Latest posts</h1>
-  <p class="hero-copy">Thoughtful posts, beautifully presented.</p>
+  <p class="hero-copy">Thoughtful posts, beautifully presented. Browse by category, search for a topic, or jump straight into a story.</p>
 </section>
 
 <form method="get" class="panel">
-  <input type="text" name="q" value="{{ query }}" placeholder="Search posts..." class="search-box">
+  <label for="search-posts" class="form-label">Search posts</label>
+  <input id="search-posts" type="text" name="q" value="{{ query }}" placeholder="Search posts..." class="search-box">
 </form>
 
 <div class="posts-grid">
@@ -29,7 +30,7 @@
 </div>
 
 {% if is_paginated %}
-<div class="mt-8 flex justify-center gap-4 text-sm text-slate-300">
+<div class="editor-actions" style="justify-content:center; margin-top:1.5rem;">
   {% if page_obj.has_previous %}<a class="nav-chip" href="?page={{ page_obj.previous_page_number }}">Previous</a>{% endif %}
   {% if page_obj.has_next %}<a class="nav-chip" href="?page={{ page_obj.next_page_number }}">Next</a>{% endif %}
 </div>

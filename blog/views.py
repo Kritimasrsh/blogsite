@@ -6,12 +6,19 @@ from django.contrib.auth.forms import UserCreationForm
 from django.core.exceptions import ValidationError
 from django.contrib import messages
 from django.shortcuts import get_object_or_404, redirect, render
+
+
+class CommentForm(forms.Form):
+    body = forms.CharField(
+        widget=forms.Textarea(attrs={"class": "form-textarea", "rows": 4, "placeholder": "Write a comment..."}),
+        required=True,
+    )
 from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from django.db.models import Q
 from .forms import PostForm, CategoryForm, TagForm
-from .models import Post, Category, Tag
+from .models import Post, Category, Tag, Comment
 
 class PostListView(ListView):
     model = Post
@@ -42,6 +49,32 @@ class PostDetailView(DetailView):
     template_name = "blog/post_detail.html"
     context_object_name = "post"
     slug_field = "slug"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        post = self.object
+        context["comments"] = post.comments.select_related("author").all()
+        context["related_posts"] = (
+            Post.objects.filter(published=True, category=post.category)
+            .exclude(pk=post.pk)
+            .order_by("-created_at")[:3]
+        )
+        context["comment_form"] = CommentForm()
+        return context
+
+    def post(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        if not request.user.is_authenticated:
+            messages.error(request, "Please log in to leave a comment.")
+            return redirect(self.object.get_absolute_url())
+
+        form = CommentForm(request.POST)
+        if form.is_valid():
+            Comment.objects.create(post=self.object, author=request.user, body=form.cleaned_data["body"])
+            messages.success(request, "Your comment has been added.")
+        else:
+            messages.error(request, "Comment could not be added.")
+        return redirect(self.object.get_absolute_url())
 
 class CategoryPostListView(ListView):
     model = Post

@@ -21,6 +21,7 @@ body {
   font-family: 'Inter', sans-serif;
   background: linear-gradient(135deg, var(--bg-main) 0%, #111827 100%);
   color: var(--text-main);
+  line-height: 1.6;
 }
 
 body::before {
@@ -58,6 +59,7 @@ a {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 1rem;
 }
 
 .brand {
@@ -91,6 +93,11 @@ a {
   max-width: 1200px;
   margin: 0 auto;
   padding: 2rem 1.25rem 3rem;
+}
+
+.page-shell {
+  width: min(100%, 1400px);
+  margin: 0 auto;
 }
 
 .hero-card,
@@ -153,6 +160,16 @@ a {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 1.25rem;
+}
+
+.post-card,
+.panel,
+.hero-card,
+.login-card,
+.editor-card,
+.auth-hero,
+.auth-panel {
+  overflow: hidden;
 }
 
 .post-card {
@@ -220,6 +237,60 @@ a {
   font-size: 0.95rem;
 }
 
+@media (max-width: 768px) {
+  .site-nav {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .nav-links {
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  .main-content {
+    padding: 1.25rem 1rem 2rem;
+  }
+
+  .posts-grid,
+  .editor-grid,
+  .form-grid,
+  .auth-shell {
+    grid-template-columns: 1fr;
+  }
+
+  .hero-card,
+  .login-card,
+  .dashboard-card,
+  .form-card,
+  .editor-card,
+  .auth-hero,
+  .auth-panel {
+    padding: 1.25rem;
+    border-radius: 1.25rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero-title {
+    font-size: 1.6rem;
+  }
+
+  .post-meta {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .btn-primary,
+  .btn-secondary {
+    width: 100%;
+  }
+
+  .editor-actions {
+    flex-direction: column;
+  }
+}
+
 .login-card,
 .dashboard-card,
 .form-card {
@@ -263,6 +334,34 @@ a {
 .form-input::placeholder,
 .form-textarea::placeholder {
   color: var(--text-subtle);
+}
+
+.file-input {
+  cursor: pointer;
+}
+
+.file-input::-webkit-file-upload-button {
+  background: linear-gradient(135deg, var(--accent), var(--accent-strong));
+  color: white;
+  border: none;
+  border-radius: 999px;
+  padding: 0.7rem 1rem;
+  font-weight: 700;
+  margin-right: 0.75rem;
+  cursor: pointer;
+  box-shadow: 0 8px 20px rgba(14, 165, 233, 0.25);
+}
+
+.file-input::file-selector-button {
+  background: linear-gradient(135deg, var(--accent), var(--accent-strong));
+  color: white;
+  border: none;
+  border-radius: 999px;
+  padding: 0.7rem 1rem;
+  font-weight: 700;
+  margin-right: 0.75rem;
+  cursor: pointer;
+  box-shadow: 0 8px 20px rgba(14, 165, 233, 0.25);
 }
 
 .form-check {

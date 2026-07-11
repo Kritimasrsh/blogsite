@@ -24,7 +24,7 @@ class PostForm(forms.ModelForm):
             "slug": forms.TextInput(attrs={"class": "form-input", "placeholder": "short-slug"}),
             "content": forms.Textarea(attrs={"class": "form-textarea", "placeholder": "Write your blog content here..."}),
             "excerpt": forms.Textarea(attrs={"class": "form-textarea", "placeholder": "Short summary for previews"}),
-            "cover_image": forms.ClearableFileInput(attrs={"class": "form-input"}),
+            "cover_image": forms.ClearableFileInput(attrs={"class": "form-input file-input", "accept": "image/*"}),
             "published": forms.HiddenInput(),
         }
 

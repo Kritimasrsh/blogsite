@@ -15,16 +15,6 @@
   </div>
 
   <div class="auth-panel">
-    {% if messages %}
-      <div class="auth-messages">
-        {% for message in messages %}
-          <div class="{% if message.tags == 'error' %}auth-message error{% else %}auth-message success{% endif %}">
-            {{ message }}
-          </div>
-        {% endfor %}
-      </div>
-    {% endif %}
-
     <form method="post" class="auth-form">
       {% csrf_token %}
       <div class="editor-field">
