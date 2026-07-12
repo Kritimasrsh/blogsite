@@ -24,13 +24,13 @@
       <div class="editor-field">
         <label for="id_password1">Password</label>
         {{ form.password1 }}
-        <div class="auth-policy">
-          <p>Use at least 8 characters and include a number and a special character.</p>
-        </div>
       </div>
       <div class="editor-field">
         <label for="id_password2">Confirm password</label>
         {{ form.password2 }}
+        <div class="auth-policy">
+          <p>Use at least 8 characters and include a number and a special character.</p>
+        </div>
       </div>
       {% if form.errors %}
         <div class="editor-error">
